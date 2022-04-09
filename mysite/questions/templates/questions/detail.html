@@ -1,0 +1,61 @@
+{% extends "header.html" %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}
+<style>
+  .rounded-xl {
+   border-radius: .5rem;
+}
+</style>
+
+<body style="background-color:#286086;">
+<div class="container my-2 py-2 bg-light text-black rounded-xl" >
+<form action="{% url 'quiz:answer' question.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        
+        <legend><h1>{{question.quiz_title}}</h1></legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% for que in question.questions.all %}
+        {{que.question_title}} :
+        {{que.question_text}}
+        ( Pts. {{que.points}} )
+        <br>
+        
+        {% for choice in que.choices.all %}
+        <div class="form-check">
+            <input  class="form-check-input"  type="checkbox" name="{{que.id}}" id="choice{{ forloop.counter }}" value="{{ forloop.counter }}">
+            <label class="form-check-label" for="choice{{ forloop.counter }}">{{choice.choice_text}}</label><br>
+          </div> 
+        {% endfor %}
+        {%if forloop.counter != question.questions.all.count %}
+            <hr>
+        {% endif %}
+        {% endfor %}
+    </fieldset>
+    <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+  </div>
+    
+    <script type='text/javascript'>
+        $('input[type="checkbox"]').on('click', function() {
+      // in the handler, 'this' refers to the box clicked on
+      var $box = $(this);
+      if ($box.is(":checked")) {
+        // the name of the box is retrieved using the .attr() method
+        // as it is assumed and expected to be immutable
+        var group = "input:checkbox[name='" + $box.attr("name") + "']";
+        // the checked state of the group/box on the other hand will change
+        // and the current value is retrieved using .prop() method
+        $(group).prop("checked", false);
+        $box.prop("checked", true);
+      } else {
+        $box.prop("checked", false);
+      }
+    });
+    </script>
+        
+      </body>
+    {% endblock  %}
+  

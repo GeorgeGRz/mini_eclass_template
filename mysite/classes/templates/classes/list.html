@@ -1,0 +1,23 @@
+{% extends "header.html" %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}
+
+{% load check_if_enrolled %}
+{% if courses %}
+    <ul class="list-group">
+    {% for course in courses %}
+        {% if request.user|enrolled:course%}
+        <li class="list-group-item "><a href="{% url 'classes:detail' course.id %}">{{ course.courseName }}</a> <div class="text-right "><a href="/" class="btn btn-secondary disabled" type="submit" >Enrolled</a></div></li>
+        {%else%}    
+        <li class="list-group-item "><a href="{% url 'classes:detail' course.id %}">{{ course.courseName }}</a> <div class="text-right"><a href="{% url 'classes:enroll'  course.id %}" class="btn btn-primary" type="submit">Enroll</a></div></li>
+        {%endif%}
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+
+{%endblock%}

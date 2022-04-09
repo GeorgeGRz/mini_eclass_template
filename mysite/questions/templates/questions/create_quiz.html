@@ -1,0 +1,148 @@
+<script>
+var limit = 10; // Max questions
+var count = 0; // There are 4 questions already
+var choiceCount = 0
+
+function addChoiceAction(clicked_id){
+    var question = document.getElementById('question'+clicked_id);
+    console.log(clicked_id)
+    if(question){
+        
+        var questionTextLabel = document.createElement('label');
+        questionTextLabel.innerHTML = 'Choice text ';
+        var questionTextInput = document.createElement('input');
+        questionTextInput.type = 'text';
+        questionTextInput.className="form-control"
+        questionTextInput.name = 'question'+clicked_id;
+        var list = document.createElement("ul");
+
+        //list.style.listStyle = 'list-style-type:disc;'
+        var divGroup = document.createElement('div')
+        divGroup.className="form-group"
+
+        divGroup.appendChild(questionTextLabel)
+        divGroup.appendChild(questionTextInput)
+
+        list.className="list-group list-group-flush"
+        if (questionTextInput && questionTextLabel)   
+        {
+            // Add the new elements to the form
+            var elem = document.createElement("li");
+            elem.className="list-group-item"
+            //elem.appendChild(questionTextLabel);
+            //elem.appendChild(questionTextInput);
+            elem.appendChild(divGroup)
+            list.appendChild(elem);
+            question.append(list)
+            // Increment the count
+            choiceCount++;
+        }
+        
+    }
+}
+
+
+
+
+function addQuestion()
+{
+    // Get the quiz form element
+    var quiz = document.getElementById('quiz');
+    
+    // Good to do error checking, make sure we managed to get something
+    if (quiz)
+    {
+        if (count < limit)
+        {
+            // Create a new <p> element
+            var question_div = document.createElement('div'); //div that holds the question as entity
+            question_div.id= 'question'+count;
+            
+            
+            var QuestionTitle = document.createElement('p');
+            QuestionTitle.innerHTML = 'Question ' + (count + 1);
+            
+            var questionTextLabel = document.createElement('label')
+            questionTextLabel.innerHTML = 'Question text: ';
+
+
+            // Create the new text box
+            var questionTextInput = document.createElement('input');
+            questionTextInput.type = 'text';
+            questionTextInput.name = 'question'+count;
+            questionTextInput.required = true
+            
+
+
+            var choice_label = document.createElement('label')
+            choice_label.innerHTML = 'Correct Choice: ';
+            var correctChoiceInput = document.createElement('input');
+            correctChoiceInput.type = 'number';
+            correctChoiceInput.min = 0;
+            correctChoiceInput.name = 'question'+count;
+            correctChoiceInput.required = true
+
+            var pointsLabel = document.createElement('label')
+            pointsLabel.innerHTML = 'Points: ';
+
+
+            // Create the new text box
+            var ptsInput = document.createElement('input');
+            ptsInput.type = 'number';
+            ptsInput.min = 0;
+            ptsInput.name = 'question'+count;
+            ptsInput.required =true
+
+            var addChoice = document.createElement('input')
+            addChoice.type='button'
+            addChoice.value='Add choice'
+            addChoice.id = count
+            addChoice.onclick = function(){ addChoiceAction(this.id) } ;
+            // Good practice to do error checking
+            if (questionTextInput && QuestionTitle)   
+            {
+                // Add the new elements to the form
+                question_div.appendChild(QuestionTitle);
+                question_div.appendChild(questionTextLabel)
+                question_div.appendChild(questionTextInput);
+                question_div.appendChild(choice_label)
+                question_div.appendChild(correctChoiceInput);
+                question_div.appendChild(pointsLabel)
+                question_div.appendChild(ptsInput)
+                question_div.appendChild(addChoice)
+
+                quiz.appendChild(question_div)
+                // Increment the count
+                count++;
+            }
+        }
+        else   
+        {
+            alert('Question limit reached');
+        }
+    }
+}
+
+</script>
+{% extends "header.html" %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}
+{% load group_filtering %}
+{% if request.user|has_group:"Staff" %} 
+{% if perms.questions.add_quiz %}
+
+{%endif%}
+{%endif%}
+<h1>Quiz Create</h1>
+<form action="{% url 'quiz:submit_new_question' %}" method="post" id="quiz">
+    {% csrf_token %}
+    {{form |crispy }}
+    <br>
+    <input type="button" value="Add question" onclick="javascript: addQuestion();"/> 
+    
+   
+    <input type="submit" value="Submit">
+</form>
+{%endblock%}

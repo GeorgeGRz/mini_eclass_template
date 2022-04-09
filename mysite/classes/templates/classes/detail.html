@@ -1,0 +1,127 @@
+{% extends "header.html" %}
+{% block title %}Mini-Eclass | {{class.courseName}}{% endblock %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+
+{% block content %}
+
+
+
+<!--<link rel="stylesheet" type="text/css" href="{% static 'classes/style.css' %}">-->
+<!--
+{% for file in files%}
+
+{%if file.extension == ".png"%}
+{{file.extension}}
+
+<image src="{{file.file.url}}"></image>
+{%endif%}
+<br>
+{%if file.extension == ".pdf"%}
+
+<div id="adobe-dc-view" style="height: 360px; width: 500px;"></div>
+
+<script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+
+<script type="text/javascript">
+
+  document.addEventListener("adobe_dc_view_sdk.ready", function(){
+
+    var adobeDCView = new AdobeDC.View({clientId: "7769e3909bfc4ce4b142a8d55c0fc767", divId: "adobe-dc-view"});
+
+    adobeDCView.previewFile({
+      content:{ location:
+        { url: "{{file.file.url}}"}},
+      metaData:{fileName: "{{file.file.name}}"}
+    },
+    {
+
+      embedMode: "SIZED_CONTAINER"
+
+    });
+
+  });
+
+</script>
+
+
+{%endif%}
+
+
+{%endfor%}
+-->
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="row">
+    <div class="col-sm-2">
+        <div class="wrapper d-flex">
+            <div class="sidebar">
+                
+                <ul>
+                    <a href="/"> <img src="{% static 'classes/favicon.ico' %}" class="img-thumbnail rounded mx-auto d-block" ></a>
+                    <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+                    <li><a href="#"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
+                    <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
+                            class="number2">5</span></li>
+                    </li>
+                    <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                </ul>
+                <p class="myproject px-3">PROJECTS</p>
+                <ul>
+                    <li><a href="#">Website redesign</a></li>
+                    <li><a href="#">GraphQL API</a></li>
+                    <li><a href="#">Customer migration guides</a></li>
+                    <li><a href="#">Profit sharing program</a></li>
+                </ul>
+                <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
+                    <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i
+                            class=" fa fas fa-cog mnp"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="row-fluid">
+            <div class="span2">
+                <h2>{{class.courseName}}</h2>
+                {% for teacher in class.professors.all %}
+                <h2 class="page-subtitle">{{teacher.username}}</h2>
+                {% endfor %}
+                <div class="card">
+                    <h5 class="card-header">
+                        Course description
+                        <a href="{% url 'classes:users' class.id %}">
+                            <span class="fa fa-users fa-fw pull-right" data-toggle="tooltip" data-placement="top"
+                                title="{{class.enrolledPeople.all.count}} Users"
+                                data-original-title="0 Users"></span>
+                        </a>
+                    </h5>
+                    <div class="card-body text-justify">
+                        <!--<h5 class="card-title">Special title treatment</h5>-->
+                        <p class="card-text ">{{class.courseDescription | safe }}</p>
+
+                        <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                    </div>
+                </div>
+            </div>
+            <div class="span2 mt-2">Text 2
+                
+                
+            </div>
+        </div>
+
+    </div>
+    
+
+
+    {%endblock%}

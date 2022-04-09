@@ -1,0 +1,7 @@
+{% load crispy_forms_tags %}
+<form action="{% url 'classes:create' %}" enctype="multipart/form-data" method="POST" id="quiz">
+    {% csrf_token %}
+    {{form |crispy }}
+    {{fileForm | crispy}}
+    <input type="submit" value="Submit">
+</form>
