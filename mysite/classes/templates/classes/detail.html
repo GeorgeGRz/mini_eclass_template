@@ -69,7 +69,7 @@
                 <ul>
                     <a href="/"> <img src="{% static 'classes/favicon.ico' %}" class="img-thumbnail rounded mx-auto d-block" ></a>
                     <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
-                    <li><a href="#"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
+                    <li><a href="{% url 'classes:files' class.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
                     <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
                             class="number2">5</span></li>
                     </li>
@@ -125,3 +125,6 @@
 
 
     {%endblock%}
+
+
+    

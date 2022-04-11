@@ -71,14 +71,9 @@
   <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Grades</a><span class="number2">5</span></li>
   </li>
   <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+  <li><a href="{% url 'logout' %}"><i class="fa fas fa-sign-out"></i>Logout</a></li>
 </ul>
-<p class="myproject px-3">PROJECTS</p>
-<ul>
-  <li><a href="#">Website redesign</a></li>
-  <li><a href="#">GraphQL API</a></li>
-  <li><a href="#">Customer migration guides</a></li>
-  <li><a href="#">Profit sharing program</a></li>
-</ul>
+
 <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
   <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i class=" fa fas fa-cog mnp"></i></a>
 </div>
@@ -116,13 +111,11 @@
       <h2>Mini-Eclass Homepage</h2>
     </div>
     <div class="col">
-      
-        BBB
-      
+      BBB
     </div>
   </div>
-  
-  <div class="span2 mt-2">Anakoinwseis 
+
+  <div class="span2 mt-2">Anakoinwseis
   </div>
 </div>
 {%endif%}

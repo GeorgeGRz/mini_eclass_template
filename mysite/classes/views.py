@@ -61,3 +61,11 @@ def showUsers(request,class_id):
         return render(request,'classes/users.html',{'course':course})
     else:
         return redirect("/login")
+
+def files(request,class_id):
+    if request.user.is_authenticated:
+        course = Course.objects.get(pk=class_id)
+        files = CourseFile.objects.filter(feed=course)
+        return render(request,'classes/class_files.html',{'course':course,'files':files})
+    else:
+        return redirect("/login")
