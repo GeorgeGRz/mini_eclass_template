@@ -1,7 +1,11 @@
-from django.shortcuts import render,get_object_or_404,redirect
-from .models import *
+from django.shortcuts import render,get_object_or_404,redirect,HttpResponse
 
+from questions.models import Quiz, Grade
+from .models import *
+from django.contrib.auth.decorators import login_required
 from .forms import *
+
+from itertools import chain
 # Create your views here.
 def create_to_feed(request):
     user = request.user
@@ -54,18 +58,31 @@ def user_enroll(request,course_id):
     else:
         return redirect("/login")
 
-
+@login_required
 def showUsers(request,class_id):
-    if request.user.is_authenticated:
-        course = Course.objects.get(pk=class_id)
-        return render(request,'classes/users.html',{'course':course})
-    else:
-        return redirect("/login")
+    course = Course.objects.get(pk=class_id)
+    return render(request,'classes/users.html',{'course':course})
 
+@login_required
 def files(request,class_id):
     if request.user.is_authenticated:
         course = Course.objects.get(pk=class_id)
         files = CourseFile.objects.filter(feed=course)
+        if not course.enrolledPeople.filter(pk = request.user.pk).exists():
+            return redirect("/classes")
         return render(request,'classes/class_files.html',{'course':course,'files':files})
     else:
         return redirect("/login")
+
+@login_required
+def list_quizes(request,class_id):
+    co = Course.objects.get(pk=class_id)
+    if not co.enrolledPeople.filter(pk = request.user.pk).exists():
+            return redirect("/classes")
+    quizes = Quiz.objects.filter(course=co)
+    results = {}
+    for quiz in quizes:
+        grade = Grade.objects.filter(student_key=request.user,quiz_key=quiz)
+        results.setdefault(quiz.quiz_title, grade)
+
+    return render(request,'classes/list_quizes.html',{'course':co,'quizes':results})

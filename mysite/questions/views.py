@@ -8,17 +8,16 @@ from .forms import *
 from django.contrib.auth import login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from classes.models import Course
+from datetime import datetime
 
 def index(request):
     if request.user.is_authenticated:
-        latest_questions = Quiz.objects.order_by('-quiz_title')
-        template = loader.get_template('questions/index.html')
-        context = {
-            'latest_question_list': latest_questions,
-        }
-        return HttpResponse(template.render(context, request))
-    else:
-        return redirect("/")
+        classes = Course.objects.all()
+        users_in_zones = Course.objects.filter(enrolledPeople=User.objects.get(pk=request.user.id))
+        for x in users_in_zones:
+            print(x)
+    return render(request,'home.html')
 
 
 def detail(request,question_id):
@@ -60,12 +59,14 @@ def answer(request,question_id):
     return HttpResponse("You scored %s." % pts)
 
 
-def create_quiz(request):
-    # if this is a POST request we need to process the form data
-    # print(request.user)
-    #if user does not belong to Staff, redirect to homepage
-    print(request.user)
-    if not request.user.groups.filter(name="Staff").exists():
+def create_quiz(request,class_id):
+    
+    cl = Course.objects.get(pk=class_id)
+    print("PRINTING")
+    print(cl)
+    if not request.user.is_staff:
+        raise PermissionDenied()
+    if not request.user.is_staff:
         raise PermissionDenied()
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -83,14 +84,16 @@ def create_quiz(request):
         form = QuizForm()
         qForm = QuestionForm(request.POST)
 
-    return render(request, 'questions/create_quiz.html', {'form': form,'questionForm':qForm})
+    return render(request, 'questions/create_quiz.html', {'form': form,'questionForm':qForm,'class':cl})
 
-def submit_new_question(request):
+def submit_new_question(request, class_id):
     print(request.POST)
     qNum = 1
-    quiz = Quiz.objects.create(quiz_title=request.POST['quiz_title'])
+    quiz = Quiz.objects.create(quiz_title=request.POST['quiz_title'],duration=request.POST['duration'])
+    course = Course.objects.get(pk=class_id)
+    
     for key,value in request.POST.lists():
-        if key!='csrfmiddlewaretoken' and key !='quiz_title':
+        if key!='csrfmiddlewaretoken' and key !='quiz_title' and key!='duration':
             print(key,value)
             qt = 'Question '+str(qNum)
             qtext = value[0]
@@ -103,5 +106,7 @@ def submit_new_question(request):
                 question.choices.add(choice)
             quiz.questions.add(question)
             qNum = qNum + 1
+    quiz.course = course
+    quiz.save()
     return HttpResponse("You're voting on question %s." % 1)
 

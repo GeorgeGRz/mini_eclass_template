@@ -130,19 +130,17 @@ function addQuestion()
 
 {% load crispy_forms_tags %}
 {% load group_filtering %}
-{% if request.user|has_group:"Staff" %} 
+{% if request.user.is_staff %} 
 {% if perms.questions.add_quiz %}
 
 {%endif%}
 {%endif%}
 <h1>Quiz Create</h1>
-<form action="{% url 'quiz:submit_new_question' %}" method="post" id="quiz">
+<form action="{% url 'classes:submit_new_question' class.id %}" method="post" id="quiz">
     {% csrf_token %}
     {{form |crispy }}
     <br>
     <input type="button" value="Add question" onclick="javascript: addQuestion();"/> 
-    
-   
     <input type="submit" value="Submit">
 </form>
 {%endblock%}

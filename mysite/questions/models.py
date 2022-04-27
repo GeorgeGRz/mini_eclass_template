@@ -1,9 +1,14 @@
 from django.db import models
-
+from classes.models import Course
 from django.contrib.auth.models import User
 class Quiz(models.Model):
     quiz_title = models.CharField(max_length=200) #title of the quiz
     questions = models.ManyToManyField('Question')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,blank=True, null=True)
+    enabled = models.BooleanField(blank=True,null=True)
+    duration = models.IntegerField(blank=True,null=True)
+    start_time = models.DateTimeField(blank=True,null=True)
+    end_time = models.DateTimeField(blank=True,null=True)
     def __str__(self):
         return self.quiz_title
 

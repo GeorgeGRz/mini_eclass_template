@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% load static %}
-
+{%load check_if_enrolled%}
 {% block content %}
 
 
@@ -67,21 +67,24 @@
             <div class="sidebar">
                 
                 <ul>
-                    <a href="/"> <img src="{% static 'classes/favicon.ico' %}" class="img-thumbnail rounded mx-auto d-block" ></a>
+                    <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class="rounded mx-auto d-block" ></a>
                     <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+                    {% if request.user|enrolled:class %}
                     <li><a href="{% url 'classes:files' class.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
                     <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
                             class="number2">5</span></li>
                     </li>
+                    <li><a href="{% url 'classes:quizes' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
+                    <li class="notification2"><a href="#"><i class="fa far fa-comments-o"></i>Chat</a></li>
                     <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                    
+                    </li>
+                    {%endif%}
+                    {% if request.user in class.professors.all and request.user.is_staff%}
+                    <li><a href="{% url 'classes:quiz_create' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
+                    {%endif%}
                 </ul>
-                <p class="myproject px-3">PROJECTS</p>
-                <ul>
-                    <li><a href="#">Website redesign</a></li>
-                    <li><a href="#">GraphQL API</a></li>
-                    <li><a href="#">Customer migration guides</a></li>
-                    <li><a href="#">Profit sharing program</a></li>
-                </ul>
+                
                 <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
                     <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i
                             class=" fa fas fa-cog mnp"></i></a>
@@ -100,11 +103,19 @@
                 <div class="card">
                     <h5 class="card-header">
                         Course description
+                        {% if request.user|enrolled:class %}
                         <a href="{% url 'classes:users' class.id %}">
-                            <span class="fa fa-users fa-fw pull-right" data-toggle="tooltip" data-placement="top"
+                            <span class="fa fa-users fa-fw pull-right fa-xl" data-toggle="tooltip" data-placement="top"
                                 title="{{class.enrolledPeople.all.count}} Users"
                                 data-original-title="0 Users"></span>
                         </a>
+                        {%else%}
+                        <a href="{% url 'classes:enroll'  class.id %}">
+                            <span class="fa fa-plus  fa-fw pull-right" data-toggle="tooltip" data-placement="top"
+                                title="Enroll"
+                                data-original-title="0 Users"></span>
+                        </a>
+                        {%endif%}
                     </h5>
                     <div class="card-body text-justify">
                         <!--<h5 class="card-title">Special title treatment</h5>-->

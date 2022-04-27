@@ -1,5 +1,5 @@
 {% extends "header.html" %}
-{% block title %}Mini-Eclass | {{class.courseName}}{% endblock %}
+{% block title %}Mini-Eclass | {{course.courseName}} | Users {% endblock %}
 {% block content %}
 
 {% load crispy_forms_tags %}
@@ -24,21 +24,15 @@
         <div class="wrapper d-flex">
             <div class="sidebar">
                 <ul>
-                  <a href="/"> <img src="{% static 'classes/favicon.ico' %}" class="img-thumbnail rounded mx-auto d-block" ></a>
+                  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class=" rounded mx-auto d-block" ></a>
                     <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
-                    <li><a href="#"><i class="fa fas fa-solid fa-file"></i>Files</a></li>
+                    <li><a href="{% url 'classes:files' course.id %}"><i class="fa fas fa-solid fa-file"></i>Files</a></li>
                     <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
                             class="number2">5</span></li>
                     </li>
                     <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
                 </ul>
-                <p class="myproject px-3">PROJECTS</p>
-                <ul>
-                    <li><a href="#">Website redesign</a></li>
-                    <li><a href="#">GraphQL API</a></li>
-                    <li><a href="#">Customer migration guides</a></li>
-                    <li><a href="#">Profit sharing program</a></li>
-                </ul>
+                
                 <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
                     <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i
                             class=" fa fas fa-cog mnp"></i></a>
@@ -70,7 +64,7 @@
               <tr>
                 <td>{{person.first_name}}</td>
                 <td>{{person.last_name}}</td>
-                {% if person|has_group:"Staff" %} 
+                {% if person.is_staff %} 
                 <td>Professor</td>
                 {%else%}
                 <td>Student</td>

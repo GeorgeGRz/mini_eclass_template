@@ -5,8 +5,9 @@ from django.contrib.auth.models import User
 class QuizForm(forms.Form):
     class Meta:
         model = Quiz
-        fields = ['quiz_title']
+        fields = ['quiz_title','duration']
     quiz_title = forms.CharField(max_length=100)
+    duration = forms.IntegerField()
 
 
 class QuestionForm(forms.Form):

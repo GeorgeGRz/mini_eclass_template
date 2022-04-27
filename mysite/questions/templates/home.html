@@ -63,9 +63,26 @@
 
 {%block sidebar%}
 {%if user.is_authenticated%}
+<script>
+  var ws = new WebSocket("ws://localhost:4000/socket/websocket");
+  
+  ws.onopen = function(){
+    //Subscribe to the channel
+    ws.send(JSON.stringify({"command": "subscribe","topic":"chat:hey","event":"phx_join","payload":"{\"token\" : \"undefined\", \"vsn\" : \"2.0.0\"}","ref":"ok"}))
+    var username = "{{ request.user.first_name|safe| upper }}" +" " + "{{ request.user.last_name|safe| upper }}" ;
+    var obj = {name: username, body: "hey"};
+    ws.send(JSON.stringify({"command": "shout","topic":"chat:hey","event":"shout","payload":obj,"ref":"ok2"}))
+
+    //ws.send(JSON.stringify({"command": "shout","topic":"chat:hey","event":"shout","payload":"{\"token\" => \"undefined\"}","ref":"ok"}))
+  }    
+
+  ws.onmessage = function(msg) {
+    console.log(JSON.parse(msg.data).message);
+  }
+  </script>
 <ul>
-  <a href="/"> <img src="{% static 'classes/favicon.ico' %}"
-      class="img-thumbnail img-fluid rounded mx-auto d-block"></a>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class="img-fluid rounded mx-auto d-block"></a>
   <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
   <li><a href="{% url 'classes:list' %}"><i class="fa fas fa-solid fa-file"></i>Courses</a></li>
   <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Grades</a><span class="number2">5</span></li>
@@ -79,8 +96,8 @@
 </div>
 {%else%}
 <ul>
-  <a href="/"> <img src="{% static 'classes/favicon.ico' %}"
-      class="img-thumbnail img-fluid rounded mx-auto d-block"></a>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class="img-fluid rounded mx-auto d-block"></a>
   <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
   <li><a href="{% url 'login' %}"><i class="fa fas fa-sign-in"></i>Login</a></li>
   <li class="notification2"><a href="{% url 'registration:register' %}"><i class="fa fas fa-user-plus"></i>Register</a>
