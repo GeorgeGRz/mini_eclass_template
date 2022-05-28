@@ -14,3 +14,8 @@ python -m pip install django-crispy-forms #forms pou dinoun bootstrap sta django
 cd ../mini_eclass_template/mysite/ 
 python manage.py runserver #trexeis ton server
 ```
+Για να εχουμε την λειτουργία του chat, πρεπει να τρέχει ο αντίστοιχος chat server.Αφου μεταβούμε στον κατάλογο, τρεχουμε
+```bash
+docker-compose build
+docker-compose up
+```
