@@ -75,13 +75,14 @@
                             class="number2">5</span></li>
                     </li>
                     <li><a href="{% url 'classes:quizes' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
-                    <li class="notification2"><a href="#"><i class="fa far fa-comments-o"></i>Chat</a></li>
+                    <li class="notification2"><a href="{% url 'classes:livechat' class.id %}"><i class="fa far fa-comments-o"></i>Chat</a></li>
                     <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
                     
                     </li>
                     {%endif%}
                     {% if request.user in class.professors.all and request.user.is_staff%}
                     <li><a href="{% url 'classes:quiz_create' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
+                    <li><a href="{% url 'classes:file_upload' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Upload File</a></li>
                     {%endif%}
                 </ul>
                 

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Mini-Eclass | Home{% endblock %}
+
+{%load static %}
+
+
+{% load crispy_forms_tags %}
+
+{%block sidebar%}
+{%if user.is_authenticated%}
+<ul>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class="img-fluid rounded mx-auto d-block"></a>
+  <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+  <li><a href="{% url 'classes:list' %}"><i class="fa fas fa-solid fa-file"></i>Courses</a></li>
+  <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Grades</a><span class="number2">5</span></li>
+  </li>
+  <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+  <li><a href="{% url 'logout' %}"><i class="fa fas fa-sign-out"></i>Logout</a></li>
+</ul>
+
+<div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
+  <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i class=" fa fas fa-cog mnp"></i></a>
+</div>
+{%else%}
+<ul>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class="img-fluid rounded mx-auto d-block"></a>
+  <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+  <li><a href="{% url 'login' %}"><i class="fa fas fa-sign-in"></i>Login</a></li>
+  <li class="notification2"><a href="{% url 'registration:register' %}"><i class="fa fas fa-user-plus"></i>Register</a>
+  </li>
+  </li>
+
+</ul>
+{%endif%}
+{%endblock%}
+
+{%block body%}
+<h2>Uploading files to {{class.courseName}}</h2>
+<form action="{% url 'classes:file_upload' class.id %}" enctype="multipart/form-data" method="POST" id="quiz">
+    {% csrf_token %}
+    {{fileForm | crispy}}
+    <input type="submit" value="Submit">
+</form>
+{%endblock%}

@@ -18,13 +18,13 @@ from django.urls import include,path
 from django.views.generic.base import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
-
+from classes import views as c_views
 
 urlpatterns = [
         #path('quizes/', include('questions.urls')),
         path('admin/', admin.site.urls),
         path("accounts/", include("django.contrib.auth.urls")),
-        path('', TemplateView.as_view(template_name='home.html'), name='home'),
+        path('', c_views.mainPage, name='home'),
         #path('', include('questions.urls')),
         path('register', include('registration.urls')),
         path('classes/',include('classes.urls')),

@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+
+{% block title %}Mini-Eclass | {{class.courseName}} | LiveChat{% endblock %}
+
+{%load static %}
+
+{%load check_if_enrolled%}
+
+{% load group_filtering %}
+
+{%block sidebar%}
+<ul>
+    <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class="rounded mx-auto d-block"></a>
+    <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+    {% if request.user|enrolled:class %}
+    <li><a href="{% url 'classes:files' class.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
+    <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
+            class="number2">5</span></li>
+    </li>
+    <li><a href="{% url 'classes:quizes' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
+    <li class="notification2"><a href="{% url 'classes:livechat' class.id %}"><i
+                class="fa far fa-comments-o"></i>Chat</a></li>
+    <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+
+    </li>
+    {%endif%}
+
+    {% if request.user in class.professors.all and request.user.is_staff%}
+    <hr>
+    <li><a href="{% url 'classes:quiz_create' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a>
+    </li>
+    <li><a href="{% url 'classes:file_upload' class.id %}"><i class="fa fas fa-upload fa-fw"></i>Upload
+            File</a></li>
+    {%endif%}
+</ul>
+
+<div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
+    <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i class=" fa fas fa-cog mnp"></i></a>
+</div>
+{%endblock%}
+
+{%block body%}
+<script>
+
+    const url = 'http://127.0.0.1:4000/all_messages?room=abc';
+
+    fetch(url, { mode: 'cors' }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        console.log(data.messages)
+        var card = document.getElementById("cardTest")
+
+        for (var key in data.messages) {
+            var value = data.messages[key];
+            
+
+            if (value.name == "{{request.user.id}}") {
+
+                var userMsgDiv = document.createElement("div")
+                userMsgDiv.className = "d-flex flex-row justify-content-end mb-4 pt-1"
+                
+
+
+                var secDiv = document.createElement("div")
+                userMsgDiv.appendChild(secDiv)
+                var userMsg = document.createElement("p")
+                userMsg.className = "small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
+                userMsg.innerHTML = value.body;
+                userMsg.style.backgroundColor = "#f5f6f7"
+                userMsgDiv.appendChild(userMsg)
+
+                var userPhoto = document.createElement("img")
+                userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto.style.width = "45px";
+                userPhoto.style.height = "100%";
+                userMsgDiv.appendChild(userPhoto)
+
+                card.appendChild(userMsgDiv)
+            }
+            else {
+                var userMsgDiv = document.createElement("div")
+                userMsgDiv.className = "d-flex flex-row justify-content-start"
+                var userPhoto = document.createElement("img")
+                userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto.style.width = "45px";
+                userPhoto.style.height = "100%";
+                userMsgDiv.appendChild(userPhoto)
+
+
+                var secDiv = document.createElement("div")
+                userMsgDiv.appendChild(secDiv)
+                var userMsg = document.createElement("p")
+                userMsg.className = "small p-2 ms-3 mb-1 rounded-3"
+                userMsg.innerHTML = value.body;
+                userMsg.style.backgroundColor = "#f5f6f7"
+                userMsgDiv.appendChild(userMsg)
+
+                card.appendChild(userMsgDiv)
+            }
+
+        }
+
+    }).catch(function (e) {
+        console.log(e);
+    });
+    //var ws = new WebSocket("ws://localhost:4000/socket/websocket");
+    setupWebSocket();
+    function setupWebSocket(){
+        this.ws = new WebSocket("ws://localhost:4000/socket/websocket");
+        
+        this.ws.onmessage = function (msg) {
+        console.log(JSON.parse(msg.data));
+        var obj = JSON.parse(msg.data)
+        if (obj["payload"].new_user) {
+            var item = document.getElementById(obj["payload"].new_user.name)
+            if(item != null)
+                return;
+
+            console.log("NEW USER JOINED")
+            var card = document.getElementById("usersCard")
+
+            var userDiv = document.createElement("div")
+            userDiv.className = "d-flex flex-row justify-content-start"
+
+            var userName = document.createElement("p")
+            userName.className = "small p-2 ms-3 mb-1 rounded-3"
+            userName.innerHTML = obj["payload"].new_user.name;
+            userName.id = obj["payload"].new_user.name;
+            userName.style.backgroundColor = "#f5f6f7"
+
+            var userPhoto = document.createElement("img")
+            userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+            userPhoto.style.width = "45px";
+            userPhoto.style.height = "100%";
+
+            userDiv.appendChild(userPhoto);
+            userDiv.appendChild(userName);
+
+
+
+            var x = document.createElement("hr");
+
+
+            card.appendChild(userDiv)
+            card.appendChild(x)
+        }
+        else if(obj["payload"].name != "{{request.user.id}}" && obj["event"] == "shout"){
+                console.log("RECEIVED")
+                var card = document.getElementById("cardTest")
+                var userMsgDiv = document.createElement("div")
+                userMsgDiv.className = "d-flex flex-row justify-content-start"
+                var userPhoto = document.createElement("img")
+                userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto.style.width = "45px";
+                userPhoto.style.height = "100%";
+                userMsgDiv.appendChild(userPhoto)
+
+
+                var secDiv = document.createElement("div")
+                userMsgDiv.appendChild(secDiv)
+                var userMsg = document.createElement("p")
+                userMsg.className = "small p-2 ms-3 mb-1 rounded-3"
+                userMsg.innerHTML = obj["payload"].body;
+                userMsg.style.backgroundColor = "#f5f6f7"
+                userMsgDiv.appendChild(userMsg)
+
+                card.appendChild(userMsgDiv)
+        }
+        else{
+            if(obj["event"] == "shout"){
+                var card = document.getElementById("cardTest")
+                var userMsgDiv = document.createElement("div")
+                userMsgDiv.className = "d-flex flex-row justify-content-end mb-4 pt-1"
+                
+                var secDiv = document.createElement("div")
+                userMsgDiv.appendChild(secDiv)
+                var userMsg = document.createElement("p")
+                userMsg.className = "small p-2 me-3 mb-1 text-white rounded-3 bg-primary"
+                userMsg.innerHTML = obj["payload"].body
+                userMsg.style.backgroundColor = "#f5f6f7"
+                userMsgDiv.appendChild(userMsg)
+
+                var userPhoto = document.createElement("img")
+                userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto.style.width = "45px";
+                userPhoto.style.height = "100%";
+                userMsgDiv.appendChild(userPhoto)
+
+
+                card.appendChild(userMsgDiv)
+            }
+            
+        }
+    }
+        this.ws.addEventListener('close', (event) => {
+            console.log('The connection has been closed successfully.');
+            setTimeout(setupWebSocket, 1000);
+
+        });
+
+        this.ws.onopen = function () {
+            //Subscribe to the channel
+            var username = "{{ request.user.first_name|safe| upper }}" + " " + "{{ request.user.last_name|safe| upper }}";
+            var obj = { name: username };
+            ws.send(JSON.stringify({ "command": "subscribe", "topic": "chat:{{class.courseName}}", "event": "phx_join", "payload": obj, "ref": "ok" }))
+            //ws.send(JSON.stringify({"command": "shout","topic":"chat:hey","event":"shout","payload":"{\"token\" => \"undefined\"}","ref":"ok"}))
+        }    
+}
+    
+    
+   
+
+    function sendMessage() {
+        var val = document.getElementById("exampleFormControlInput1").value;
+        console.log(val);
+        
+        //var username = "{{ request.user.first_name|safe| upper }}" +" " + "{{ request.user.last_name|safe| upper }}" ;
+        var userid = "{{ request.user.id|safe}}";
+        var obj = { name: userid, body: val };
+
+        
+        document.getElementById("exampleFormControlInput1").value = ""
+        this.ws.send(JSON.stringify({ "command": "shout", "topic": "chat:{{class.courseName}}", "event": "shout", "payload": obj, "ref": "ok2" }))
+    }
+</script>
+<div class="container-fluid py-4">
+    <div class="row-fluid">
+        <div class="row">
+            <div class="col-md">
+                <div class="card " id="chat2" style="overflow-y: auto;max-height: 700px;">
+                    <div class="card-header d-flex justify-content-center align-items-center p-3">
+                        <h5 class="mb-0">{{class.courseName}} LiveChat</h5>
+                    </div>
+                    <div class="card-body" data-mdb-perfect-scrollbar="true" id="cardTest">
+                        <!--
+                        <div class="d-flex flex-row justify-content-start">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                                alt="avatar 1" style="width: 45px; height: 100%;">
+                            <div>
+                                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">Hi</p>
+                                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">How are you
+                                    ...???
+                                </p>
+                                <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">What are you
+                                    doing
+                                    tomorrow? Can we come up a bar?</p>
+                                <p class="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                            <div>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Hiii, I'm good.</p>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">How are you doing?</p>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Long time no see!
+                                    Tomorrow
+                                    office. will
+                                    be free on sunday.</p>
+                                <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:06</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
+                                alt="avatar 1" style="width: 45px; height: 100%;">
+                        </div>
+
+                        
+
+                        <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                            <div>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Hiii, I'm good.</p>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">How are you doing?</p>
+                                <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">Long time no see!
+                                    Tomorrow
+                                    office. will
+                                    be free on sunday.</p>
+                                <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">00:06</p>
+                            </div>
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp"
+                                alt="avatar 1" style="width: 45px; height: 100%;">
+                        </div>
+
+                        -->
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="card" style="overflow-y: auto;max-height: 700px;">
+                    <div class="card-header d-flex justify-content-center align-items-center p-3">
+                        <h5 class="mb-0">Online Users</h5>
+                    </div>
+                    <div class="card-body" data-mdb-perfect-scrollbar="true" id="usersCard">
+                        <!--
+                        <div class="d-flex flex-row justify-content-start">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                                alt="avatar 1" style="width: 45px; height: 100%;">
+                            <p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">User A</p>
+                        </div>
+                        <hr>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="span2 mt-2">
+            <div class="card">
+                <div class="card-header text-muted d-flex justify-content-start align-items-center p-3">
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp"
+                        alt="avatar 3" style="width: 40px; height: 100%;">
+                    <input type="text" class="form-control form-control-md" id="exampleFormControlInput1"
+                        placeholder="Type message">
+                    <a class="ms-3 text-muted" href=""><i class="fa fas fa-smile fa-fw"></i></a>
+                    <a class="ms-3" onclick="sendMessage();"><i class="fa fas fa-paper-plane fa-fw"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

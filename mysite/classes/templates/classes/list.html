@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Mini-Eclass | Home{% endblock %}
+{% block title %}Mini-Eclass | Classes{% endblock %}
 
 {%load static %}
 
@@ -68,7 +68,7 @@
   <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
       class=" img-fluid rounded mx-auto d-block"></a>
   <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
-  <li><a href="{% url 'classes:list' %}"><i class="fa fas fa-solid fa-file"></i>Courses</a></li>
+  <li><a href="{% url 'classes:list' %}"><i class="fa far fa-graduation-cap"></i>Courses</a></li>
   <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Grades</a><span class="number2">5</span></li>
   </li>
   <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
@@ -134,7 +134,7 @@
         
       </tr>
     </tfoot>
-  </table>
+    </table>
     
 {% else %}
     <p>No polls are available.</p>

@@ -9,8 +9,9 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from classes.models import Course
-from datetime import datetime
-
+from  .models import Grade
+from datetime import datetime,timedelta
+from django.utils import timezone
 def index(request):
     if request.user.is_authenticated:
         classes = Course.objects.all()
@@ -20,10 +21,14 @@ def index(request):
     return render(request,'home.html')
 
 
-def detail(request,question_id):
+def detail(request,quiz_id):
     if request.user.is_authenticated:
         try:
-            question = Quiz.objects.get(pk=question_id)
+            quiz = get_object_or_404(Quiz, pk=quiz_id)#get quiz by ID that's sent through url
+            grade = Grade.objects.get(quiz_key = quiz, student_key = request.user)
+            if grade or timezone.now() > quiz.end_time:
+                return redirect("/")
+            question = Quiz.objects.get(pk=quiz_id)
         except Question.DoesNotExist:
             raise Http404("Question does not exist")
         return render(request,'questions/detail.html',{'question': question})
@@ -39,6 +44,9 @@ def results(request,question_id):
 def answer(request,question_id):
     
     quiz = get_object_or_404(Quiz, pk=question_id)#get quiz by ID that's sent through url
+    
+    if timezone.now() > quiz.end_time:
+        return redirect("/")
     pts = 0
     print(request.POST)
     for key, value in request.POST.lists():
@@ -110,3 +118,19 @@ def submit_new_question(request, class_id):
     quiz.save()
     return HttpResponse("You're voting on question %s." % 1)
 
+def quiz_enable(request,class_id,quiz_id):
+    #course = Course.objects.get(pk=class_id)
+    quiz = Quiz.objects.get(pk=quiz_id)
+    quiz.start_time = timezone.now()
+    quiz.enabled = True
+    quiz.end_time = timezone.now() + timedelta(minutes=quiz.duration)
+    quiz.save()
+    return redirect("/classes/"+str(class_id)+"/quizes")
+
+def quiz_disable(request,class_id,quiz_id):
+    #course = Course.objects.get(pk=class_id)
+    quiz = Quiz.objects.get(pk=quiz_id)
+    
+    quiz.enabled = False
+    quiz.save()
+    return redirect("/classes/"+str(class_id)+"/quizes")

@@ -11,7 +11,7 @@
 
 <body style="background-color:#286086;">
 <div class="container my-2 py-2 bg-light text-black rounded-xl" >
-<form action="{% url 'quiz:answer' question.id %}" method="post">
+<form action="{% url 'classes:answer' question.id %}" method="post">
     {% csrf_token %}
     <fieldset>
         

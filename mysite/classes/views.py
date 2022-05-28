@@ -4,9 +4,11 @@ from questions.models import Quiz, Grade
 from .models import *
 from django.contrib.auth.decorators import login_required
 from .forms import *
-
+from django.utils import timezone
 from itertools import chain
+from django.contrib.auth.forms import AuthenticationForm
 # Create your views here.
+
 def create_to_feed(request):
     user = request.user
     if request.method == 'POST':
@@ -59,7 +61,22 @@ def user_enroll(request,course_id):
         return redirect("/login")
 
 @login_required
+def user_unregister(request,course_id):
+    
+    course = Course.objects.get(pk=course_id)
+    if not course.enrolledPeople.filter(pk=request.user.id).exists():
+        return redirect("/")
+    else:
+        course.enrolledPeople.remove(request.user)
+        course.save()
+        return redirect("/")
+    
+
+@login_required
 def showUsers(request,class_id):
+    course = Course.objects.get(pk=class_id)
+    if not course.enrolledPeople.filter(pk = request.user.pk).exists():
+            return redirect("/classes")
     course = Course.objects.get(pk=class_id)
     return render(request,'classes/users.html',{'course':course})
 
@@ -79,10 +96,48 @@ def list_quizes(request,class_id):
     co = Course.objects.get(pk=class_id)
     if not co.enrolledPeople.filter(pk = request.user.pk).exists():
             return redirect("/classes")
-    quizes = Quiz.objects.filter(course=co)
+    quizes = Quiz.objects.filter(course=co) # get all quizes 
     results = {}
     for quiz in quizes:
         grade = Grade.objects.filter(student_key=request.user,quiz_key=quiz)
-        results.setdefault(quiz.quiz_title, grade)
+        results.setdefault(quiz, grade)
+    print(results)
+    return render(request,'classes/list_quizes.html',{'course':co,'quizes':results,'q':quizes})
 
-    return render(request,'classes/list_quizes.html',{'course':co,'quizes':results})
+from django.core.exceptions import PermissionDenied
+@login_required
+def file_upload(request,class_id):
+    co = Course.objects.get(pk=class_id)
+    if request.method == 'POST':
+        file_form = FileModelForm(request.POST, request.FILES)
+        print(request.FILES)
+        files = request.FILES.getlist('file') #field name in model
+        if file_form.is_valid():
+            for f in files:
+                print(f)
+                file_instance = CourseFile(file=f, feed=co)
+                file_instance.save()
+
+            return redirect("/")
+    else:
+        if request.user.is_staff:
+            file_form = FileModelForm()
+            return render(request, 'classes/upload_file.html', {'fileForm':file_form,'class':co})
+        else:
+            return PermissionDenied()
+
+@login_required
+def chat(request,class_id):
+    co = Course.objects.get(pk=class_id)
+    return render(request,'classes/live_chat.html',{'class':co})
+
+
+#handles main page
+def mainPage(request):
+    courses = Course.objects.all()
+    user_courses = []
+    lgnForm = AuthenticationForm()
+    for course in courses:
+        if course.enrolledPeople.filter(pk=request.user.id).exists():
+            user_courses.append(course)
+    return render(request,'home.html', {"courses":user_courses,"loginForm":lgnForm})
