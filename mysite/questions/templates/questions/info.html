@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Mini-Eclass | Classes{% endblock %}
+
+{%load static %}
+
+{%load check_if_enrolled%}
+
+{% load group_filtering %}
+
+{%block sidebar%}
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=2"  />
+{%if user.is_authenticated%}
+<ul>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class=" img-fluid rounded mx-auto d-block"></a>
+  <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+  <li><a href="{% url 'classes:list' %}"><i class="fa far fa-graduation-cap"></i>Courses</a></li>
+  <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Grades</a><span class="number2">5</span></li>
+  </li>
+  <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+  <li><a href="{% url 'logout' %}"><i class="fa fas fa-sign-out"></i>Logout</a></li>
+</ul>
+
+<div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
+  <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i class=" fa fas fa-cog mnp"></i></a>
+</div>
+{%else%}
+<ul>
+  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+      class=" img-fluid rounded mx-auto d-block"></a>
+  <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+  <li><a href="{% url 'login' %}"><i class="fa fas fa-sign-in"></i>Login</a></li>
+  <li class="notification2"><a href="{% url 'registration:register' %}"><i class="fa fas fa-user-plus"></i>Register</a>
+  </li>
+  </li>
+
+</ul>
+{%endif%}
+{%endblock%}
+
+{%block body%}
+
+<script>
+  $(document).ready(function(){
+    var mygrade = "{{gradeObj.grade}}"
+    if(mygrade < 5){
+      $("#exampleModal").modal();
+    }
+    
+    
+    
+  });
+  </script>
+<div class="row-fluid mt-3">
+  <div class="span2">
+    <h2>You scored : {{gradeObj.grade}}</h2>
+    
+  </div>
+  <div>
+    Your answers were:
+  </div>
+  <hr>
+  {% for question in gradeObj.user_choices.all%}
+  
+    Question {{forloop.counter}} : {{question.question_key.question_text}} ({{question.question_key.points}}.pts)
+
+    {% for c in question.question_key.choices.all %}
+    <!-- User correct choice -->
+    {% if question.user_choice == question.question_key.correct_answer and forloop.counter == question.question_key.correct_answer %}
+    <ul class="list-group">
+      <li><i class="fa far  fa-check fg-primary text-success">{{c.choice_text}} (Your answer)</i></li>
+    </ul>
+    {%elif question.user_choice == forloop.counter and question.user_choice != question.question_key.correct_answer%}
+    <ul class="list-group">
+      <li><i class="fa far fa-times-circle text-danger">{{c.choice_text}} (Your answer)</i></li>
+    </ul>
+
+    {%elif forloop.counter == question.question_key.correct_answer%}
+    <ul class="list-group">
+      <li><i class="fa far  fa-check text-success">{{c.choice_text}}</i></li>
+    </ul>
+    {%else%}
+    <ul class="list-group">
+      <li><i class="fa far fa-times-circle text-danger">{{c.choice_text}}</i> </li>
+    </ul>
+    {%endif%}
+    {%endfor%}
+    <hr>
+  
+  {%endfor%}
+
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Report</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          You need to study more! 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+{%endblock%}
+
+

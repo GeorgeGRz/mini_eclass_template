@@ -137,7 +137,18 @@ def mainPage(request):
     courses = Course.objects.all()
     user_courses = []
     lgnForm = AuthenticationForm()
-    for course in courses:
-        if course.enrolledPeople.filter(pk=request.user.id).exists():
-            user_courses.append(course)
-    return render(request,'home.html', {"courses":user_courses,"loginForm":lgnForm})
+    user_quizes = []
+    for crs in courses:
+        if crs.enrolledPeople.filter(pk=request.user.id).exists():
+            user_courses.append(crs)
+            quizes = Quiz.objects.filter(course=crs) 
+            for quiz in quizes:
+                grade = Grade.objects.filter(student_key=request.user,quiz_key=quiz)
+                if grade:
+                    user_quizes.append(grade)
+    
+    
+    
+    
+    
+    return render(request,'home.html', {"courses":user_courses,"loginForm":lgnForm,"quizes":user_quizes})

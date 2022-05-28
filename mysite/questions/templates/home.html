@@ -69,8 +69,13 @@
 
   $(document).ready(function () {
     $('#dtBasicExample').DataTable();
+    $("#quizesTable").DataTable();
     $('.dataTables_length').addClass('bs-select');
+    
+    
   });
+
+
 </script>
 
 <style>
@@ -178,7 +183,6 @@
             {% for course in courses %}
 
             <tr>
-
               <td><a href="{% url 'classes:detail' course.id %}">{{course}}</a>
                 <a href="{% url 'classes:unregister' course.id %}"><span class="pull-right fa fa-minus-circle"
                     data-toggle="tooltip" data-original-title="Remove"></span></a>
@@ -201,17 +205,45 @@
         </table>
       </div>
       <div class="col-sm">
-        <div class="card ">
-          <div class="card-header ">
-            My Quizes
-          </div>
-          <div class="card-body">
-            <ul class="list-group">
+        <table id="quizesTable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th class="th-sm">Quiz
 
-            </ul>
-          </div>
+              </th>
+              <th class="th-sm">Grade
 
-        </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for quiz in quizes %}
+            {% with quiz.all|first as quiz2 %}
+            <tr>
+              <td><a href="{% url 'classes:showQuiz' quiz2.quiz_key.id %}">{{quiz2.quiz_key.quiz_title}}</a>
+              </td>
+              <td>
+                {{quiz2.grade}}
+              </td>
+
+            </tr>
+            {% endwith %}
+            
+            
+            
+            {%endfor%}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Quiz
+              </th>
+              <th>Grade
+
+              </th>
+
+            </tr>
+          </tfoot>
+        </table>
 
       </div>
 
@@ -272,7 +304,7 @@
 
     </div>
     <div class="row">
-      <section class="contact-us">
+      <section class="contact-us container-fluid">
         <div class="container">
           <div class="row">
             <div class="col-md-7">
@@ -305,7 +337,7 @@
   
             <div class="col-lg-5">
               <div class="map">
-                <iframe src="https://maps.google.com/maps?q=athens&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%"
+                <iframe src="https://maps.google.com/maps?q=University of West Attica&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%"
                   height="300" frameborder="0" style="border: 0;" allowfullscreen="" aria-hidden="false"
                   tabindex="0"></iframe>
               </div>

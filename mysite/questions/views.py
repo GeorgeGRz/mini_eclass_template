@@ -12,6 +12,9 @@ from classes.models import Course
 from  .models import Grade
 from datetime import datetime,timedelta
 from django.utils import timezone
+
+from django.contrib.auth.decorators import login_required
+
 def index(request):
     if request.user.is_authenticated:
         classes = Course.objects.all()
@@ -25,7 +28,11 @@ def detail(request,quiz_id):
     if request.user.is_authenticated:
         try:
             quiz = get_object_or_404(Quiz, pk=quiz_id)#get quiz by ID that's sent through url
-            grade = Grade.objects.get(quiz_key = quiz, student_key = request.user)
+            
+            try:
+                grade = Grade.objects.get(quiz_key = quiz, student_key = request.user)
+            except Grade.DoesNotExist:
+                grade = None
             if grade or timezone.now() > quiz.end_time:
                 return redirect("/")
             question = Quiz.objects.get(pk=quiz_id)
@@ -47,24 +54,37 @@ def answer(request,question_id):
     
     if timezone.now() > quiz.end_time:
         return redirect("/")
+    if  Grade.objects.filter(student_key=request.user,quiz_key=quiz).exists():
+        return redirect("/classes")
+    
     pts = 0
     print(request.POST)
+    choices = []
     for key, value in request.POST.lists():
         if key!='csrfmiddlewaretoken':
-            #print(key, value)
+            print(key, value)
             selected_choice = quiz.questions.get(pk=key)
-           
+            u_choice = UserChoice(question_key=selected_choice,user_choice=int(value[0]))
+            u_choice.save()
+            choices.append(u_choice)
             if int(value[0]) == selected_choice.correct_answer:
                 pts= pts + selected_choice.points
     #First we need to see if user grade exists
     try:
         grade = Grade.objects.get(student_key=request.user,quiz_key=quiz)
         grade.points = pts
+        for choice in choices:
+            grade.user_choices.add(choice)
         grade.save()
     except Grade.DoesNotExist:
         grd = Grade(student_key=request.user,quiz_key=quiz,grade = pts)
         grd.save()
-    return HttpResponse("You scored %s." % pts)
+        for choice in choices:
+            print(choice)
+            grd.user_choices.add(choice)
+        grd.save()
+    grd2 = Grade.objects.get(student_key=request.user,quiz_key=quiz)
+    return render(request, 'questions/info.html', {"gradeObj": grd})
 
 
 def create_quiz(request,class_id):
@@ -134,3 +154,11 @@ def quiz_disable(request,class_id,quiz_id):
     quiz.enabled = False
     quiz.save()
     return redirect("/classes/"+str(class_id)+"/quizes")
+
+
+@login_required
+def quiz_showAnswered(request,quiz_id):
+    grd = Grade.objects.get(student_key=request.user,quiz_key=quiz_id)
+    print(grd.user_choices.all())
+
+    return render(request, 'questions/info.html', {"gradeObj": grd})

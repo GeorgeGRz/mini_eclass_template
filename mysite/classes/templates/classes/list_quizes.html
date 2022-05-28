@@ -76,7 +76,7 @@
                 
                 {%if value.all %}
                 {%for grade in value.all%}
-                <td>{{key.quiz_title}}</td>
+                <td><a href="{% url 'classes:showQuiz' key.id %}">{{key.quiz_title}}</a></td>
                 <td>Yes</td>
                 <td>{{grade.grade}}</td>
                 {%endfor%}

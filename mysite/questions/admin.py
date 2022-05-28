@@ -6,5 +6,5 @@ admin.site.register(Question)
 admin.site.register(Choice)
 
 admin.site.register(Grade)
-
+admin.site.register(UserChoice)
 # Register your models here.

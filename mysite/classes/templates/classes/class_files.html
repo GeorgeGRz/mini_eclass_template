@@ -3,7 +3,7 @@
 
 
 {% block content %}
-
+{%load check_if_enrolled%}
 {% load crispy_forms_tags %}
 {% load group_filtering %}
 {% load static %}
@@ -29,21 +29,25 @@
     <div class="col-sm-2">
         <div class="wrapper d-flex">
             <div class="sidebar">
-                <ul>
-                  <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class=" rounded mx-auto d-block" ></a>
-                    <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
-                    <li><a href="{% url 'classes:list' %}"><i class="fa fas fa-solid fa-file"></i>Courses</a></li>
-                    <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
-                            class="number2">5</span></li>
-                    </li>
-                    <li class="notification2"><a href="#"><i class="fa far fa-comments-o"></i>Chat</a></li>
-                    <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
-                    
-                    {% if request.user in course.professors.all and request.user.is_staff%}
-                    <li><a href="{% url 'classes:quiz_create' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
-                    <li><a href="{% url 'classes:file_upload' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Upload File</a></li>
-                    {%endif%}
-                  </ul>
+              <ul>
+                <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class="rounded mx-auto d-block" ></a>
+                <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+                {% if request.user|enrolled:course %}
+                <li><a href="{% url 'classes:files' course.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
+                <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
+                        class="number2">5</span></li>
+                </li>
+                <li><a href="{% url 'classes:quizes' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
+                <li class="notification2"><a href="{% url 'classes:livechat' course.id %}"><i class="fa far fa-comments-o"></i>Chat</a></li>
+                <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                
+                </li>
+                {%endif%}
+                {% if request.user in class.professors.all and request.user.is_staff%}
+                <li><a href="{% url 'classes:quiz_create' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
+                <li><a href="{% url 'classes:file_upload' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Upload File</a></li>
+                {%endif%}
+            </ul>
                 
                 <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
                     <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i
