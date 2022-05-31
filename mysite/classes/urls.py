@@ -17,6 +17,7 @@ urlpatterns = [
     path('<int:class_id>/quizes', views.list_quizes, name='quizes'),
     path('<int:class_id>/upload_file',views.file_upload,name='file_upload'),
     path('<int:class_id>/livechat',views.chat,name='livechat'),
+    path('<int:class_id>/new_announcement',views.addAnnouncement,name='newAnnouncement'),
     #--------------------------------------------------------------------------#
     path("<int:class_id>/create_quiz",q_views.create_quiz,name="quiz_create"), #forward the creation of quiz to the questions
     path('<int:class_id>/quiz_create_submit/',q_views.submit_new_question,name='submit_new_question'),

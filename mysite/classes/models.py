@@ -40,3 +40,10 @@ class CourseFile(models.Model):
     def size(self):
         return convert_size(self.file.size)
     
+class CourceAnnouncement(models.Model):
+    course = models.ForeignKey(Course,on_delete=models.CASCADE,null=True)
+    time_sent = models.DateField(default=datetime.date.today)
+    title = models.CharField(max_length=60)
+    body = RichTextUploadingField()
+    professor = models.ForeignKey(User, limit_choices_to={'is_staff': True},related_name="professor",on_delete=models.CASCADE,null=True)
+

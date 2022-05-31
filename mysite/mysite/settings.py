@@ -61,6 +61,7 @@ ROOT_URLCONF = 'mysite.urls'
 CKEDITOR_CONFIGS = {
     'default': {
         'skin': 'moono',
+        'toolbar': 'full',
         
     },
 }

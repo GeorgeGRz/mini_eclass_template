@@ -14,3 +14,9 @@ class FileModelForm(forms.ModelForm):
             'file': ClearableFileInput(attrs={'multiple': True}),
         }
         # widget is important to upload multiple files
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = CourceAnnouncement
+        fields = ['title','body']

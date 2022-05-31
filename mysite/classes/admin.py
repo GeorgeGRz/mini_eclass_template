@@ -7,11 +7,16 @@ class FeedFileInline(admin.TabularInline):
 class QuizInline(admin.TabularInline):
     model = Quiz
 
+class AnnouncementsInline(admin.TabularInline):
+    model = CourceAnnouncement
 
 class FeedAdmin(admin.ModelAdmin):
     inlines = [
         FeedFileInline,
         QuizInline,
+        AnnouncementsInline
     ]
 
 admin.site.register(Course, FeedAdmin)
+
+admin.site.register(CourceAnnouncement)

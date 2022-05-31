@@ -31,7 +31,6 @@
       <hr>
       <li><a href="{% url 'classes:quiz_create' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
       <li><a href="{% url 'classes:file_upload' class.id %}"><i class="fa fas fa-upload fa-fw"></i>Upload File</a></li>
-      <li><a href="{% url 'classes:newAnnouncement' class.id %}"><i class="fa fa-plus  fa-fw "></i>New Announcement</a></li>
   {%endif%}
 </ul>
 
@@ -54,9 +53,10 @@
 
 {%block body%}
 <h2>Uploading files to {{class.courseName}}</h2>
-<form action="{% url 'classes:file_upload' class.id %}" enctype="multipart/form-data" method="POST" id="quiz">
+<form action="{% url 'classes:newAnnouncement' class.id %}" enctype="multipart/form-data" method="POST" id="quiz">
     {% csrf_token %}
-    {{fileForm | crispy}}
+    {{ form.media }}
+    {{ form.as_p }}
     <input type="submit" value="Submit">
 </form>
 {%endblock%}

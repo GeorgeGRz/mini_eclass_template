@@ -32,7 +32,7 @@
               <ul>
                 <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}" class="rounded mx-auto d-block" ></a>
                 <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
-                {% if request.user|enrolled:course %}
+                {% if request.user|enrolled:course or request.user.is_staff%}
                 <li><a href="{% url 'classes:files' course.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
                 <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
                         class="number2">5</span></li>
@@ -43,9 +43,11 @@
                 
                 </li>
                 {%endif%}
-                {% if request.user in class.professors.all and request.user.is_staff%}
-                <li><a href="{% url 'classes:quiz_create' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
-                <li><a href="{% url 'classes:file_upload' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Upload File</a></li>
+                {% if request.user in course.professors.all and request.user.is_staff%}
+                    <hr>
+                    <li><a href="{% url 'classes:quiz_create' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
+                    <li><a href="{% url 'classes:file_upload' course.id %}"><i class="fa fas fa-upload fa-fw"></i>Upload File</a></li>
+                    <li><a href="{% url 'classes:newAnnouncement' course.id %}"><i class="fa fa-plus  fa-fw "></i>New Announcement</a></li>
                 {%endif%}
             </ul>
                 
