@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 import os
 from ckeditor_uploader.fields import RichTextUploadingField
 import datetime
+from django.utils import timezone
 
 import math
 def convert_size(size_bytes):
@@ -30,7 +31,7 @@ class Course(models.Model):
 class CourseFile(models.Model):
     file = models.FileField(upload_to="files/%Y/%m/%d")
     feed = models.ForeignKey(Course, on_delete=models.CASCADE)
-    uploaded = models.DateField(default=datetime.date.today)
+    uploaded = models.DateField(default=timezone.datetime.now)
     def extension(self):
         name, extension = os.path.splitext(self.file.name)
         return extension
@@ -42,8 +43,10 @@ class CourseFile(models.Model):
     
 class CourceAnnouncement(models.Model):
     course = models.ForeignKey(Course,on_delete=models.CASCADE,null=True)
-    time_sent = models.DateField(default=datetime.date.today)
+    time_sent = models.DateTimeField(default=timezone.datetime.now)
     title = models.CharField(max_length=60)
     body = RichTextUploadingField()
     professor = models.ForeignKey(User, limit_choices_to={'is_staff': True},related_name="professor",on_delete=models.CASCADE,null=True)
 
+    def __str__(self):
+        return self.title + " " + str(self.time_sent)

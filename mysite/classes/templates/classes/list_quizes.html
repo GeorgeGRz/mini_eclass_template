@@ -29,8 +29,8 @@
                 <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
                 {% if request.user|enrolled:course or request.user.is_staff%}
                 <li><a href="{% url 'classes:files' course.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
-                <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Notifications</a><span
-                        class="number2">5</span></li>
+                <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Messages</a><span
+                  class="number2">{{announcements | length}}</span></li>
                 </li>
                 <li><a href="{% url 'classes:quizes' course.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
                 <li class="notification2"><a href="{% url 'classes:livechat' course.id %}"><i class="fa far fa-comments-o"></i>Chat</a></li>

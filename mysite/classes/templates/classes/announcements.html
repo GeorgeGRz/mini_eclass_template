@@ -1,21 +1,16 @@
 {% extends "header.html" %}
-{% block title %}Mini-Eclass | {{course.courseName}} | Files{% endblock %}
-
-
+{% block title %}Mini-Eclass | {{course.courseName}} | Quizes {% endblock %}
 {% block content %}
-{%load check_if_enrolled%}
+
 {% load crispy_forms_tags %}
 {% load group_filtering %}
+{%load check_if_enrolled%}
 {% load static %}
-
-
-
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 <script>
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+    
     $(document).ready(function () {
   $('#dtBasicExample').DataTable();
   $('.dataTables_length').addClass('bs-select');
@@ -61,60 +56,50 @@
     </div>
     <div class="col-sm-9">
         <a href="{% url 'classes:detail' course.id %}"><h2>{{course.courseName}}</h2></a>
-        <h5>Files</h5>
+        <h5>Quizes</h5>
+       
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
             <thead>
               <tr>
-                <th class="th-sm">Type
-          
-                </th>
-                <th class="th-sm">File Name
-          
-                </th>
-                <th class="th-sm">Size
+                <th class="th-sm">Announcement title
+                  
                 </th>
                 <th class="th-sm">Date
+          
                 </th>
-                <th class="th-sm">Action
+                <th class="th-sm">Published By
                 </th>
               </tr>
             </thead>
             <tbody>
-                {%for file in files %}
+                {% for a in announcements %}
                 
+                <tr>
                 
-              <tr>
-                <td class="text-center">{%if file.extension == ".pdf"%}
-                    <span class="fa fa-file-pdf-o"></span>
-                    
-                    {% elif file.extension == '.png' %}
-                    <span class="fa fa-image"></span>
-                    {%else%}
-                    <span class="fa fa-file"></span>
-                    {%endif%}
-                </td>
-                <td><a href="{{file.file.url}}">{{file.name}}</a></td>
-                <td>{{file.size}}</td>
-                <td>{{file.uploaded}}</td>
-                <td class="text-center"><a href="{{file.file.url}}" download><span class="fa fa-download fa-fw" title="" data-toggle="tooltip" data-original-title="Download"></span></a></td>
-              </tr>
+               
+                <td><a href="{% url 'classes:announcement_Detail' course.id a.id %}">{{a.title}}</a></td>
+                <td>{{a.time_sent}}</td>
+                <td>{{a.professor}}</td>
+              
+                </tr>
               {%endfor%}
             </tbody>
             <tfoot>
               <tr>
-                <th>Type
+                <th class="th-sm">Announcement title
+                  
                 </th>
-                <th>File Name
+                <th class="th-sm">Date
+          
                 </th>
-                <th>Size
+                <th class="th-sm">Published By
                 </th>
-                <th>Date
-                </th>
-                <th>Action
-                </th>
+                
               </tr>
             </tfoot>
           </table>
+
+        
     </div>
 
 

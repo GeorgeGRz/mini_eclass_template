@@ -71,7 +71,7 @@
                     <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
                     {% if request.user|enrolled:class or request.user.is_staff%}
                     <li><a href="{% url 'classes:files' class.id %}"><i class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
-                    <li class="notification2"><a href="{% url 'classes:classAnnouncements' class.id %}"><i class="fa far fa-envelope"></i>Messages</a><span
+                    <li class="notification2"><a href="#"><i class="fa far fa-envelope"></i>Messages</a><span
                             class="number2">{{announcements | length}}</span></li>
                     </li>
                     <li><a href="{% url 'classes:quizes' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
@@ -98,71 +98,19 @@
     </div>
     <div class="col-sm-9">
         <div class="row-fluid">
-            <div class="span2">
-                <h2>{{class.courseName}}</h2>
-                
-                <h2 class="page-subtitle">
-                  {% for teacher in class.professors.all %}
-                   {% if forloop.counter == class.professors.all|length %}
-                    {{teacher.first_name | upper}} {{teacher.last_name | upper}}
-                    {%else%}
-                    {{teacher.first_name | upper}} {{teacher.last_name | upper}},
-                    {%endif%}
-                  {% endfor %}
-                </h2>
+            <div class="span2 mt-4">
+                <a href="{% url 'classes:detail' class.id %}"><h2>{{class.courseName}}</h2></a>
+                <h4 class="text-secondary">Announcement</h4>
                 <div class="card">
-                    <h5 class="card-header">
-                        Course description
-                        {% if request.user|enrolled:class %}
-                        <a href="{% url 'classes:users' class.id %}">
-                            <span class="fa fa-users fa-fw pull-right fa-xl" data-toggle="tooltip" data-placement="top"
-                                title="{{class.enrolledPeople.all.count}} Users"
-                                data-original-title="0 Users"></span>
-                        </a>
-                        {%else%}
-                        <a href="{% url 'classes:enroll'  class.id %}">
-                            <span class="fa fa-plus  fa-fw pull-right" data-toggle="tooltip" data-placement="top"
-                                title="Enroll"
-                                data-original-title="0 Users"></span>
-                        </a>
-                        {%endif%}
-                    </h5>
-                    <div class="card-body text-justify">
-                        <!--<h5 class="card-title">Special title treatment</h5>-->
-                        <p class="card-text ">{{class.courseDescription | safe }}</p>
-
-                        <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
-                    </div>
-                </div>
-            </div>
-            <div class="span2 mt-2">
-                <div class="card ">
-                    <div class="card-header font-weight-bold text-secondary">
-                      Course Announcements
-                    </div>
                     <div class="card-body">
-                      {% if announcements %}
-                      <ul class="list-group">
-                        {% for a in announcements%}
-                        
-                        <li class="list-group-item">
-                          <div class="item-wholeline">
-                            <div class="text-primary">
-                              <a href="{% url 'classes:announcement_Detail' class.id a.id %}">{{a.title}}</a>
-                            </div>
-                            <div class="text-secondary">{{a.course.courseName | upper}} </div>
-                            <div>{{a.time_sent}}</div>
-                          </div>
-                        </li>
-                        
-                        {%endfor%}
-            
-                      </ul>
-                      {%else%}
-                        No announcements yet..
-                      {%endif%}
+                      <h4 class="card-title font-weight-bold">{{announcement.title}}</h5>
+                      <p class="card-text text-secondary font-italic" style="font-size: 16px;">- {{announcement.time_sent }} -</p>
+                      <p class="card-text"> {{announcement.body | safe}} </p>
+                      
                     </div>
-                    
+                    <div class="card-footer">
+                        <p class="card-text pull-right">Uploaded by <b>{{announcement.professor}}</b></p>
+                    </div>
                   </div>
                 
                 

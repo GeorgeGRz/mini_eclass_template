@@ -69,14 +69,14 @@
 
   $(document).ready(function () {
     $('#dtBasicExample').DataTable({
-      "lengthMenu": [ 5 ]
+      "lengthMenu": [5]
     });
     $("#quizesTable").DataTable({
-      "lengthMenu": [ 5 ]
+      "lengthMenu": [5]
     });
     $('.dataTables_length').addClass('bs-select');
-    
-    
+
+
   });
 
 
@@ -89,7 +89,7 @@
     -moz-background-size: 100% 100%;
     -o-background-size: 100% 100%;
     background-size: 100% 100%;
-    border-radius: 9px ;
+    border-radius: 9px;
   }
 
   .contact-us {
@@ -232,9 +232,9 @@
 
             </tr>
             {% endwith %}
-            
-            
-            
+
+
+
             {%endfor%}
           </tbody>
           <tfoot>
@@ -252,17 +252,31 @@
       </div>
 
     </div>
-    <div class="span2  mt-5 " >
+    <div class="span2  mt-5 mb-4 ">
       <div class="card ">
-        <div class="card-header ">
-          My Messages
+        <div class="card-header font-weight-bold text-secondary">
+          My Announcements
         </div>
         <div class="card-body">
           <ul class="list-group">
-            <li class="list-group-item">A</li>
-            <li class="list-group-item">B</li>
-            <li class="list-group-item">C</li>
+            {% for a in announcements%}
+            
+            <li class="list-group-item">
+              <div class="item-wholeline">
+                <div class="text-primary">
+                  <a href="{% url 'classes:announcement_Detail' a.course.id a.id%}">{{a.title}}</a>
+                </div>
+                <div class="text-secondary">{{a.course.courseName | upper}} </div>
+                <div>{{a.time_sent}}</div>
+              </div>
+            </li>
+            
+            {%endfor%}
+
           </ul>
+        </div>
+        <div class="card-footer">
+          <a class="pull-right" href="">More..</a>
         </div>
       </div>
     </div>
@@ -314,7 +328,7 @@
             <div class="col-md-7">
               <div class="section-title">
                 <h2>Contact Us</h2>
-                
+
               </div>
             </div>
           </div>
@@ -338,11 +352,12 @@
                 <button type="submit" class="btn btn-light">Contact Now</button>
               </form>
             </div>
-  
+
             <div class="col-lg-5">
               <div class="map">
-                <iframe src="https://maps.google.com/maps?q=University of West Attica&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%"
-                  height="300" frameborder="0" style="border: 0;" allowfullscreen="" aria-hidden="false"
+                <iframe
+                  src="https://maps.google.com/maps?q=University of West Attica&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                  width="100%" height="300" frameborder="0" style="border: 0;" allowfullscreen="" aria-hidden="false"
                   tabindex="0"></iframe>
               </div>
             </div>
@@ -350,7 +365,7 @@
         </div>
       </section>
     </div>
-    
+
 
 
 
