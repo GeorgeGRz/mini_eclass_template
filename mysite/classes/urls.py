@@ -20,6 +20,8 @@ urlpatterns = [
     path('<int:class_id>/new_announcement',views.addAnnouncement,name='newAnnouncement'),
     path('<int:class_id>/announcement/<int:announcement_id>',views.announcementDetail,name="announcement_Detail"),
     path('<int:class_id>/announcements',views.classAnnouncements,name="classAnnouncements"),
+    path('<int:class_id>/courseStatistics',views.courseStatistics,name="courseStatistics"),
+    path('<int:class_id>/userCourseStatistics',views.userCourseStatistics,name='userCourseStatistics'),
     #--------------------------------------------------------------------------#
     path("<int:class_id>/create_quiz",q_views.create_quiz,name="quiz_create"), #forward the creation of quiz to the questions
     path('<int:class_id>/quiz_create_submit/',q_views.submit_new_question,name='submit_new_question'),

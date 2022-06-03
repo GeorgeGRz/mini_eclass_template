@@ -1,0 +1,303 @@
+{% extends "header.html" %}
+{% block title %}Mini-Eclass | {{class.courseName}}{% endblock %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{%load check_if_enrolled%}
+{% block content %}
+
+
+
+<!--<link rel="stylesheet" type="text/css" href="{% static 'classes/style.css' %}">-->
+<!--
+{% for file in files%}
+
+{%if file.extension == ".png"%}
+{{file.extension}}
+
+<image src="{{file.file.url}}"></image>
+{%endif%}
+<br>
+{%if file.extension == ".pdf"%}
+
+<div id="adobe-dc-view" style="height: 360px; width: 500px;"></div>
+
+<script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+
+<script type="text/javascript">
+
+  document.addEventListener("adobe_dc_view_sdk.ready", function(){
+
+    var adobeDCView = new AdobeDC.View({clientId: "7769e3909bfc4ce4b142a8d55c0fc767", divId: "adobe-dc-view"});
+
+    adobeDCView.previewFile({
+      content:{ location:
+        { url: "{{file.file.url}}"}},
+      metaData:{fileName: "{{file.file.name}}"}
+    },
+    {
+
+      embedMode: "SIZED_CONTAINER"
+
+    });
+
+  });
+
+</script>
+
+
+{%endif%}
+
+
+{%endfor%}
+-->
+
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+
+</script>
+<style>
+.btn1 {
+  text-decoration: none;
+  display: inline-block;
+  padding: 8px 16px;
+}
+
+.btn1:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.previous {
+  background-color: black;
+  color: white;
+}
+
+.next {
+  background-color: black;
+  color: white;
+}
+
+.round {
+  border-radius: 50%;
+}
+</style>
+<script>
+    
+    window.onload = function () {
+        
+       this.quizes = {{ quizes_stats | safe}};
+       
+       if (quizes.length === 0) { 
+            var quizTitle = document.getElementById('title')
+            quizTitle.style="visibility:hidden"
+            var footer = document.getElementById('footer')
+            footer.style="visibility:hidden"
+
+            var quizesDiv = document.getElementById("currentTest")
+
+            var noStatsDiv = document.createElement('div')
+            var noStats = document.createElement('h5')
+            noStats.innerHTML = "<b> No quizes yet! </b>"
+
+            noStatsDiv.append(noStats)
+            quizesDiv.append(noStatsDiv)
+            return;
+        }
+       var quizTitle = document.getElementById('title')
+       quizTitle.innerHTML="User statistics "
+    
+       
+       var quizesDiv = document.getElementById("currentTest")
+
+       var quizDiv = document.createElement('div')
+       quizDiv.className= 'row'
+       var chartDiv = document.createElement('div')
+        chartDiv.className = 'col-sm'
+        var percentage_chart = document.createElement('canvas');
+        percentage_chart .id = 'mychart'
+        this.ctx = percentage_chart .getContext('2d')
+        this.myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Percentage over 5', 'Percentage less than 5'],
+                datasets: [{
+                    label: '# of Grades',
+                    data: [this.quizes.percentage_over_5, this.quizes.percentage_less_5],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        chartDiv.append(percentage_chart)
+        
+
+        var gradesCount = [0,0,0,0,0,0,0,0,0,0,0]
+        this.quizes['grades'].forEach(function (value,counter){
+            gradesCount[value]++; 
+        });
+        
+
+        var gradesChartDiv = document.createElement('div')
+        gradesChartDiv.className = 'col-sm'
+        var percentage_chart2 = document.createElement('canvas');
+        percentage_chart2 .id = 'gradesChart'
+        this.ctx2 = percentage_chart2 .getContext('2d')
+        this.myChart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['0', '1','2','3','4','5','6','7','8','9'],
+                datasets: [{
+                    label: '# Grades',
+                    data: gradesCount,
+                    backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 120, 132, 0.2)',
+
+                    ],
+                    borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 130, 64, 1)',
+
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                
+                }
+            }
+        });
+        gradesChartDiv.append(percentage_chart2)
+
+        var statsDiv = document.createElement('div')
+
+        this.avg = document.createElement('p')
+        this.avg.innerHTML = '<b>Average:</b> ' + this.quizes.avg
+        statsDiv.append(this.avg)
+
+
+        quizDiv.append(statsDiv)
+        quizDiv.append(chartDiv )
+        quizDiv.append(gradesChartDiv)
+        
+        
+        quizesDiv.append(statsDiv)
+        quizesDiv.append(quizDiv)
+    }
+
+   
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"
+    integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div class="row">
+    <div class="col-sm-2">
+        <div class="wrapper d-flex">
+            <div class="sidebar">
+
+                <ul>
+                    <a href="/"> <img src="{% static 'classes/logo_new_transparent.ico' %}"
+                            class="rounded mx-auto d-block"></a>
+                    <li><a href="/" class=""><i class="fa fas fa-home"></i>Home</a></li>
+                    {% if request.user|enrolled:class or request.user.is_staff%}
+                    <li><a href="{% url 'classes:files' class.id %}"><i
+                                class="fa fas fa-solid fa-folder-open"></i>Files</a></li>
+                    <li class="notification2"><a href="{% url 'classes:classAnnouncements' class.id %}"><i
+                                class="fa far fa-envelope"></i>Messages</a><span class="number2">{{announcements | length}}
+                            </span></li>
+                    </li>
+                    <li><a href="{% url 'classes:quizes' class.id %}"><i
+                                class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
+                    <li class="notification2"><a href="{% url 'classes:livechat' class.id %}"><i
+                                class="fa far fa-comments-o"></i>Chat</a></li>
+                    {% if request.user.is_staff or request.user in class.professors.all %}
+                    <li><a href="{% url 'classes:courseStatistics' class.id %}"><i
+                                class="fa fas fa-signal"></i>Statistics</a></li>
+                    {%else%}
+                    <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                    {%endif%}
+                    </li>
+                    {%endif%}
+                    {% if request.user in class.professors.all and request.user.is_staff%}
+                    <hr>
+                    <li><a href="{% url 'classes:quiz_create' class.id %}"><i
+                                class="fa fas fa-pencil-square-o fa-fw"></i>Add quiz</a></li>
+                    <li><a href="{% url 'classes:file_upload' class.id %}"><i class="fa fas fa-upload fa-fw"></i>Upload
+                            File</a></li>
+                    <li><a href="{% url 'classes:newAnnouncement' class.id %}"><i class="fa fa-plus  fa-fw "></i>New
+                            Announcement</a></li>
+                    {%endif%}
+                </ul>
+
+                <div class="userProfile"> <a href="#"><i class="fa far fa-user-circle xyz"></i></a>
+                    <p class="username">{{user}}<br><a href="#">View Profile</a></p> <a href="#"><i
+                            class=" fa fas fa-cog mnp"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="row-fluid">
+            <div class="panel panel-primary mt-2">
+                <h2>User statistics at course <a href="{% url 'classes:detail' class.id %}">{{class.courseName}}</a> </h2>
+                </div>
+            
+            <div class="card">
+                <h5 class="card-header" id="title">
+
+                </h5>
+                <div class="card-body" id="currentTest">
+                  
+                </div>
+               
+              </div>
+            
+
+
+        </div>
+
+
+
+        {%endblock%}

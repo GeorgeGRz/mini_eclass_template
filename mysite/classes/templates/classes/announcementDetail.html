@@ -76,7 +76,11 @@
                     </li>
                     <li><a href="{% url 'classes:quizes' class.id %}"><i class="fa fas fa-pencil-square-o fa-fw"></i>Quizes</a></li>
                     <li class="notification2"><a href="{% url 'classes:livechat' class.id %}"><i class="fa far fa-comments-o"></i>Chat</a></li>
-                    <li><a href="#"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                    {% if request.user.is_staff or request.user in class.professors.all %}
+                    <li><a href="{% url 'classes:courseStatistics' class.id %}"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                    {%else%}
+                    <li><a href="{% url 'classes:userCourseStatistics' class.id%}"><i class="fa fas fa-signal"></i>Statistics</a></li>
+                    {%endif%}
                     
                     </li>
                     {%endif%}
