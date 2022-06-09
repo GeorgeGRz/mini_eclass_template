@@ -4,8 +4,7 @@
 
 {%load static %}
 
-{%load check_if_enrolled%}
-
+{% load check_if_enrolled %}
 {% load group_filtering %}
 
 {%block sidebar%}
@@ -47,6 +46,10 @@
 
 {%block body%}
 <script>
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 
     const url = 'http://127.0.0.1:4000/all_messages?room=abc';
 
@@ -77,6 +80,9 @@
 
                 var userPhoto = document.createElement("img")
                 userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto['data-toggle'] = 'tooltip'
+                userPhoto['data-placement'] = 'top'
+                userPhoto['title'] = 'You'
                 userPhoto.style.width = "45px";
                 userPhoto.style.height = "100%";
                 userMsgDiv.appendChild(userPhoto)
@@ -88,6 +94,9 @@
                 userMsgDiv.className = "d-flex flex-row justify-content-start"
                 var userPhoto = document.createElement("img")
                 userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                userPhoto['data-toggle'] = 'tooltip'
+                userPhoto['data-placement'] = 'top'
+                userPhoto['title'] = "User " + value.name
                 userPhoto.style.width = "45px";
                 userPhoto.style.height = "100%";
                 userMsgDiv.appendChild(userPhoto)
@@ -136,6 +145,9 @@
 
             var userPhoto = document.createElement("img")
             userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+            userPhoto['data-toggle'] = 'tooltip'
+            userPhoto['data-placement'] = 'top'
+            userPhoto['title'] = 'You'
             userPhoto.style.width = "45px";
             userPhoto.style.height = "100%";
 
@@ -157,8 +169,12 @@
                 userMsgDiv.className = "d-flex flex-row justify-content-start"
                 var userPhoto = document.createElement("img")
                 userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
+                
                 userPhoto.style.width = "45px";
                 userPhoto.style.height = "100%";
+                userPhoto['data-toggle'] = 'tooltip'
+                userPhoto['data-placement'] = 'top'
+                userPhoto['title'] = 'User' + obj["payload"].name 
                 userMsgDiv.appendChild(userPhoto)
 
 
@@ -167,6 +183,7 @@
                 var userMsg = document.createElement("p")
                 userMsg.className = "small p-2 ms-3 mb-1 rounded-3"
                 userMsg.innerHTML = obj["payload"].body;
+
                 userMsg.style.backgroundColor = "#f5f6f7"
                 userMsgDiv.appendChild(userMsg)
 
@@ -190,6 +207,9 @@
                 userPhoto.src = "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp";
                 userPhoto.style.width = "45px";
                 userPhoto.style.height = "100%";
+                userPhoto['data-toggle'] = 'tooltip'
+                userPhoto['data-placement'] = 'top'
+                userPhoto['title'] = 'You'
                 userMsgDiv.appendChild(userPhoto)
 
 
